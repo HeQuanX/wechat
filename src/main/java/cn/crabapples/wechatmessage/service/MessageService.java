@@ -1,9 +1,9 @@
 package cn.crabapples.wechatmessage.service;
 
-import cn.crabapples.wechatmessage.dto.BaseMessage;
-import cn.crabapples.wechatmessage.dto.EncryptMessage;
-import cn.crabapples.wechatmessage.dto.MessageTypes;
-import cn.crabapples.wechatmessage.dto.Messages;
+import cn.crabapples.wechatmessage.messages.BaseMessage;
+import cn.crabapples.wechatmessage.messages.EncryptMessage;
+import cn.crabapples.wechatmessage.messages.MessageTypes;
+import cn.crabapples.wechatmessage.messages.Messages;
 import cn.crabapples.wechatmessage.utils.AesUtils;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.jdom.Document;
@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 @RestController
@@ -96,7 +97,8 @@ public class MessageService {
             for (Field field : fields) {
                 System.out.println(field.getName());
             }
-            setParentField(messages, root);
+            messages = setParentField(messages, root);
+            System.out.println(messages);
 //            String encrypt = root.getChild("Encrypt").getValue();
 //            EncryptMessage encryptMessage = new EncryptMessage();
 //            encryptMessage.setToUserName(toUserName);
@@ -108,21 +110,19 @@ public class MessageService {
         return null;
     }
 
-    private <T extends Messages> T setParentField(T message, Element root) {
+    private <T extends Messages> Messages setParentField(T message, Element root) {
         Field[] parentFields = message.getClass().getSuperclass().getDeclaredFields();
         Field[] fields = message.getClass().getDeclaredFields();
-        Arrays.copyOf(parentFields,parentFields.length, new Field[]{});
+        ArrayList<Field> list = new ArrayList<>(Arrays.asList(parentFields));
+        list.addAll(Arrays.asList(fields));
+        Field[] allFields = new Field[parentFields.length + fields.length];
+        allFields = list.toArray(allFields);
         try {
-            for (Field field : parentFields) {
+            for (Field field : allFields) {
                 String name = field.getName();
-                String key = name.replace(name.charAt(0), (char) (name.charAt(0) - 32));
-                String value = root.getChild(key).getValue();
-                field.setAccessible(true);
-                field.set(message, value);
-            }
-            for (Field field : fields) {
-                String name = field.getName();
-                String key = name.replace(name.charAt(0), (char) (name.charAt(0) - 32));
+                char[] nameChars = name.toCharArray();
+                nameChars[0] -= 32;
+                String key = String.valueOf(nameChars);
                 String value = root.getChild(key).getValue();
                 field.setAccessible(true);
                 field.set(message, value);

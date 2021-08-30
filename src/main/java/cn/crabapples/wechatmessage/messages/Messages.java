@@ -1,11 +1,10 @@
-package cn.crabapples.wechatmessage.dto;
+package cn.crabapples.wechatmessage.messages;
 
 public abstract class Messages {
     private String toUserName;
     private String fromUserName;
     private String createTime;
     private String msgType;
-    private String msgId;
 
     public String getToUserName() {
         return toUserName;
@@ -39,11 +38,4 @@ public abstract class Messages {
         this.msgType = msgType;
     }
 
-    public String getMsgId() {
-        return msgId;
-    }
-
-    public void setMsgId(String msgId) {
-        this.msgId = msgId;
-    }
 }

@@ -1,7 +1,7 @@
 package cn.crabapples.wechatmessage.controller;
 
-import cn.crabapples.wechatmessage.dto.BaseMessage;
-import cn.crabapples.wechatmessage.dto.EncryptMessage;
+import cn.crabapples.wechatmessage.messages.BaseMessage;
+import cn.crabapples.wechatmessage.messages.EncryptMessage;
 import cn.crabapples.wechatmessage.service.MessageService;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RequestBody;

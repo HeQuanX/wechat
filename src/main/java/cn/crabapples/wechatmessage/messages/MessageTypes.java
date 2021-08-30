@@ -1,13 +1,13 @@
-package cn.crabapples.wechatmessage.dto;
+package cn.crabapples.wechatmessage.messages;
 
 public enum MessageTypes {
     TEXT("text", TextMessages.class),
-    IMAGE("image", TextMessages.class),
-    VOICE("voice", TextMessages.class),
-    VIDEO("video", TextMessages.class),
-    SHORT_VIDEO("shortvideo", TextMessages.class),
-    LOCATION("location", TextMessages.class),
-    LINK("link", TextMessages.class);
+    IMAGE("image", ImageMessages.class),
+    VOICE("voice", VoiceMessages.class),
+    VIDEO("video", VideoMessages.class),
+    SHORT_VIDEO("shortvideo", ShortVideoMessages.class),
+    LOCATION("location", LocationMessages.class),
+    LINK("link", LinkMessages.class);
     String type;
     Class<? extends Messages> instance;
 

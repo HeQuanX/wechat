@@ -1,4 +1,4 @@
-package cn.crabapples.wechatmessage.dto;
+package cn.crabapples.wechatmessage.messages;
 
 public class BaseMessage {
     @Override
