@@ -1,6 +1,6 @@
 package cn.crabapples.wechatmessage.dto;
 
-public class ServerMessage {
+public class BaseMessage {
     @Override
     public String toString() {
         return "ServerMessage{" +

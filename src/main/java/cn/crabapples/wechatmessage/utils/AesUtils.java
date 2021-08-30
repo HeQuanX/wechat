@@ -24,67 +24,13 @@ import java.util.Base64;
  */
 public class AesUtils {
     private static final Logger logger = LoggerFactory.getLogger(AesUtils.class);
-    private static final String KEY = "123456";
 
-    /**
-     * @param keyString 密钥
-     * @param source    需要加解密的字符串
-     * @param type      需要执行的操作(加/解密)
-     * @return 输出的字符串
-     * @throws Exception 运行过程中可能出现的异常
-     */
-    public static String doFinal(String keyString, String source, int type) throws Exception {
-        /*
-         * 初始化加密方式
-         */
-        Cipher cipher = Cipher.getInstance("AES");
-        /*
-         * 当操作类型为加密时
-         */
-        if (type == Cipher.ENCRYPT_MODE) {
-            /*
-             * 初始化Cipher为加密
-             */
-            cipher.init(Cipher.ENCRYPT_MODE, createKey(keyString));
-            byte[] dataByte = cipher.doFinal(source.getBytes());
-            byte[] encodeByte = Base64.getEncoder().encode(dataByte);
-            String data = parseByte2HexStr(encodeByte);
-            logger.info("加密之后的数据:[{}]", data);
-            return data;
-        } else if (type == Cipher.DECRYPT_MODE) {
-            /*
-             * 初始化Cipher为解密
-             */
-            cipher.init(Cipher.DECRYPT_MODE, createKey(keyString));
-            byte[] sourceByte = parseHexStr2Byte(source);
-            byte[] decodeByte = Base64.getDecoder().decode(sourceByte);
-            byte[] dataByte = cipher.doFinal(decodeByte);
-            String data = new String(dataByte);
-            logger.info("解密之后的数据:[{}]", data);
-            return data;
-        } else {
-            /*
-             * 当输入的类型不匹配加/解密时抛出异常
-             */
-            throw new RuntimeException("please input type");
-        }
-    }
-
-    public static String doFinal1(String aesKeyString, String source, int type) throws Exception {
+    public static String doFinal(String aesKeyString, String source, int type) throws Exception {
         byte[] aesKey = Base64.getDecoder().decode(aesKeyString + "=");
         IvParameterSpec iv = new IvParameterSpec(Arrays.copyOfRange(aesKey, 0, 16));
         SecretKeySpec keySpec = new SecretKeySpec(aesKey, "AES");
-        /*
-         * 初始化加密方式
-         */
         Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
-        /*
-         * 当操作类型为加密时
-         */
         if (type == Cipher.ENCRYPT_MODE) {
-            /*
-             * 初始化Cipher为加密
-             */
             cipher.init(Cipher.ENCRYPT_MODE, keySpec, iv);
             byte[] dataByte = cipher.doFinal(source.getBytes());
             byte[] encodeByte = Base64.getEncoder().encode(dataByte);
@@ -92,31 +38,18 @@ public class AesUtils {
             logger.info("加密之后的数据:[{}]", data);
             return data;
         } else if (type == Cipher.DECRYPT_MODE) {
-            /*
-             * 初始化Cipher为解密
-             */
             cipher.init(Cipher.DECRYPT_MODE, keySpec, iv);
             byte[] decodeByte = Base64.getDecoder().decode(source);
             byte[] dataByte = cipher.doFinal(decodeByte);
-            byte[] bytes = decode(dataByte);
-            String data = new String(bytes);
+            String data = new String(dataByte);
+            data = data.substring(data.indexOf("<xml>"), data.lastIndexOf(">") + 1);
             logger.info("解密之后的数据:[{}]", data);
             return data;
         } else {
-            /*
-             * 当输入的类型不匹配加/解密时抛出异常
-             */
             throw new RuntimeException("please input type");
         }
     }
 
-    static byte[] decode(byte[] decrypted) {
-        int pad = (int) decrypted[decrypted.length - 1];
-        if (pad < 1 || pad > 32) {
-            pad = 0;
-        }
-        return Arrays.copyOfRange(decrypted, 0, decrypted.length - pad);
-    }
 
     /**
      * 用于将密钥种子转换为KEY
