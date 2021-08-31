@@ -1,6 +1,8 @@
 package cn.crabapples.wechatmessage.messages;
 
-public abstract class Messages {
+import java.io.Serializable;
+
+public abstract class Message implements Serializable {
     private String toUserName;
     private String fromUserName;
     private String createTime;

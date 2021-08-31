@@ -2,19 +2,24 @@ package cn.crabapples.wechatmessage.service;
 
 import cn.crabapples.wechatmessage.messages.BaseMessage;
 import cn.crabapples.wechatmessage.messages.EncryptMessage;
-import cn.crabapples.wechatmessage.messages.MessageTypes;
-import cn.crabapples.wechatmessage.messages.Messages;
+import cn.crabapples.wechatmessage.messages.pull.MessageTypes;
+import cn.crabapples.wechatmessage.messages.Message;
+import cn.crabapples.wechatmessage.messages.push.TextMessage;
 import cn.crabapples.wechatmessage.utils.AesUtils;
 import org.apache.tomcat.util.buf.HexUtils;
+import org.jdom.CDATA;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.crypto.Cipher;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -85,32 +90,62 @@ public class MessageService {
         return "";
     }
 
-    public Object xml2Bean(String xmlString) {
+    public String encodeXml(String message) {
+        try {
+            return AesUtils.doFinal(aesKey, message, Cipher.ENCRYPT_MODE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public Message xml2Bean(String xmlString) {
         try {
             SAXBuilder saxBuilder = new SAXBuilder();
             ByteArrayInputStream inputStream = new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8));
             Document document = saxBuilder.build(inputStream);
-            Element root = document.getRootElement();
-            String MsgType = root.getChild("MsgType").getValue();
-            Messages messages = MessageTypes.getInstanceByType(MsgType);
-            final Field[] fields = messages.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                System.out.println(field.getName());
-            }
-            messages = setParentField(messages, root);
-            System.out.println(messages);
-//            String encrypt = root.getChild("Encrypt").getValue();
-//            EncryptMessage encryptMessage = new EncryptMessage();
-//            encryptMessage.setToUserName(toUserName);
-//            encryptMessage.setEncrypt(encrypt);
-            return null;
+            return beanSetField(document);
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException("xml 2 bean fail");
         }
-        return null;
     }
 
-    private <T extends Messages> Messages setParentField(T message, Element root) {
+    public String Bean2Xml(Message message) {
+        try {
+            TextMessage newMessage = new TextMessage();
+            newMessage.setFromUserName(message.getToUserName());
+            newMessage.setToUserName(message.getFromUserName());
+            newMessage.setMsgType(message.getMsgType());
+            newMessage.setCreateTime(message.getCreateTime());
+            newMessage.setContent("哈哈哈哈");
+
+            final Document document = xmlSetField(newMessage);
+            Format format = Format.getPrettyFormat();
+            format.setEncoding("UTF-8");
+            XMLOutputter xmlout = new XMLOutputter(format);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            xmlout.output(document, outputStream);
+            String xmlString = outputStream.toString();
+            outputStream.close();
+            System.err.println(xmlString);
+            return xmlString;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("bean 2 xml fail");
+        }
+    }
+
+    private String firstChar2UpCase(CharSequence charts) {
+        char[] nameChars = charts.toString().toCharArray();
+        nameChars[0] -= 32;
+        return String.valueOf(nameChars);
+    }
+
+    private Message beanSetField(Document document) {
+        Element root = document.getRootElement();
+        String MsgType = root.getChild("MsgType").getValue();
+        Message message = MessageTypes.getInstanceByType(MsgType);
         Field[] parentFields = message.getClass().getSuperclass().getDeclaredFields();
         Field[] fields = message.getClass().getDeclaredFields();
         ArrayList<Field> list = new ArrayList<>(Arrays.asList(parentFields));
@@ -119,10 +154,7 @@ public class MessageService {
         allFields = list.toArray(allFields);
         try {
             for (Field field : allFields) {
-                String name = field.getName();
-                char[] nameChars = name.toCharArray();
-                nameChars[0] -= 32;
-                String key = String.valueOf(nameChars);
+                String key = firstChar2UpCase(field.getName());
                 String value = root.getChild(key).getValue();
                 field.setAccessible(true);
                 field.set(message, value);
@@ -131,6 +163,32 @@ public class MessageService {
             e.printStackTrace();
         }
         return message;
+    }
+
+    private <T extends Message> Document xmlSetField(T message) {
+        Field[] parentFields = message.getClass().getSuperclass().getDeclaredFields();
+        Field[] fields = message.getClass().getDeclaredFields();
+        ArrayList<Field> list = new ArrayList<>(Arrays.asList(parentFields));
+        list.addAll(Arrays.asList(fields));
+        Field[] allFields = new Field[parentFields.length + fields.length];
+        allFields = list.toArray(allFields);
+        Document document = new Document();
+        Element root = new Element("xml");
+        document.addContent(root);
+
+        try {
+            for (Field field : allFields) {
+                field.setAccessible(true);
+                String key = field.getName();
+                final Object value = field.get(message);
+                Element child = new Element(firstChar2UpCase(key));
+                child.addContent(new CDATA(value.toString()));
+                root.addContent(child);
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return document;
     }
 
 }

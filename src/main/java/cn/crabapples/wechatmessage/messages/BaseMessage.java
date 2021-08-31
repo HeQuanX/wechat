@@ -1,16 +1,6 @@
 package cn.crabapples.wechatmessage.messages;
 
 public class BaseMessage {
-    @Override
-    public String toString() {
-        return "ServerMessage{" +
-                "signature='" + signature + '\'' +
-                ", echostr='" + echostr + '\'' +
-                ", timestamp=" + timestamp +
-                ", nonce='" + nonce + '\'' +
-                '}';
-    }
-
     private String signature;
     private String echostr;
     private Long timestamp;

@@ -8,8 +8,12 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.SecureRandom;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -24,20 +28,24 @@ import java.util.Base64;
  */
 public class AesUtils {
     private static final Logger logger = LoggerFactory.getLogger(AesUtils.class);
+    private static final int BLOCK_SIZE = 32;
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     public static String doFinal(String aesKeyString, String source, int type) throws Exception {
         byte[] aesKey = Base64.getDecoder().decode(aesKeyString + "=");
         IvParameterSpec iv = new IvParameterSpec(Arrays.copyOfRange(aesKey, 0, 16));
         SecretKeySpec keySpec = new SecretKeySpec(aesKey, "AES");
-        Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
         if (type == Cipher.ENCRYPT_MODE) {
-            cipher.init(Cipher.ENCRYPT_MODE, keySpec, iv);
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+            AlgorithmParameterSpec spec = new IvParameterSpec(new byte[16]);
+            cipher.init(Cipher.ENCRYPT_MODE, keySpec, spec);
             byte[] dataByte = cipher.doFinal(source.getBytes());
             byte[] encodeByte = Base64.getEncoder().encode(dataByte);
             String data = parseByte2HexStr(encodeByte);
             logger.info("加密之后的数据:[{}]", data);
             return data;
         } else if (type == Cipher.DECRYPT_MODE) {
+            Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
             cipher.init(Cipher.DECRYPT_MODE, keySpec, iv);
             byte[] decodeByte = Base64.getDecoder().decode(source);
             byte[] dataByte = cipher.doFinal(decodeByte);
@@ -50,26 +58,21 @@ public class AesUtils {
         }
     }
 
+    static char chr(int a) {
+        byte target = (byte) (a & 0xFF);
+        return (char) target;
+    }
 
-    /**
-     * 用于将密钥种子转换为KEY
-     *
-     * @param seed 密钥种子
-     * @return 密钥
-     * @throws Exception 生成密钥可能出现的异常
-     */
-    private static Key createKey(String seed) throws Exception {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        /*
-         * Linux下默认的算法是“NativePRNG”
-         * windows下默认是“SHA1PRNG”（sun提供的算法）
-         */
-        SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
-        secureRandom.setSeed(seed.getBytes());
-        keyGenerator.init(128, secureRandom);
-        SecretKey secretKey = keyGenerator.generateKey();
-        logger.debug("生成的key为:[{}],种子为:[{}]", secretKey, seed);
-        return secretKey;
+    static byte[] encode(int count) {
+        // 计算需要填充的位数
+        int amountToPad = BLOCK_SIZE - (count % BLOCK_SIZE);
+        // 获得补位所用的字符
+        char padChr = chr(amountToPad);
+        String tmp = "";
+        for (int index = 0; index < amountToPad; index++) {
+            tmp += padChr;
+        }
+        return tmp.getBytes(CHARSET);
     }
 
     /**
