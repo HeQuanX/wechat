@@ -130,13 +130,13 @@ public class MessageServiceImpl implements MessageService {
      */
     public String Bean2Xml(Message message) {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            TextMessage newMessage = new TextMessage();
-            newMessage.setFromUserName(message.getToUserName());
-            newMessage.setToUserName("oxF9Y6CD0X_jjAO7X8o-mfrcTI4I");
-            newMessage.setMsgType("text");
-            newMessage.setCreateTime("1630397150");
-            newMessage.setContent("哈哈哈哈");
-            Document document = BeanXmlUtils.xmlSetField(newMessage);
+//            TextMessage newMessage = new TextMessage();
+//            newMessage.setFromUserName(message.getToUserName());
+//            newMessage.setToUserName("oxF9Y6CD0X_jjAO7X8o-mfrcTI4I");
+//            newMessage.setMsgType("text");
+//            newMessage.setCreateTime("1630397150");
+//            newMessage.setContent("哈哈哈哈");
+            Document document = BeanXmlUtils.xmlSetField(message);
             Format format = Format.getPrettyFormat();
             format.setEncoding("UTF-8");
             XMLOutputter xmlout = new XMLOutputter(format);
