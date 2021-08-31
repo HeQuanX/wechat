@@ -1,8 +1,8 @@
 package cn.crabapples.wechatmessage.messages.push;
 
-import cn.crabapples.wechatmessage.messages.Message;
+import cn.crabapples.wechatmessage.messages.BaseMessage;
 
-public class MusicMessage extends Message {
+public class MusicMessage extends BaseMessage {
     private String picUrl;
     private Music music;
 
@@ -12,5 +12,61 @@ public class MusicMessage extends Message {
         private String musicUrl;
         private String hQMusicUrl;
         private String thumbMediaId;
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getMusicUrl() {
+            return musicUrl;
+        }
+
+        public void setMusicUrl(String musicUrl) {
+            this.musicUrl = musicUrl;
+        }
+
+        public String gethQMusicUrl() {
+            return hQMusicUrl;
+        }
+
+        public void sethQMusicUrl(String hQMusicUrl) {
+            this.hQMusicUrl = hQMusicUrl;
+        }
+
+        public String getThumbMediaId() {
+            return thumbMediaId;
+        }
+
+        public void setThumbMediaId(String thumbMediaId) {
+            this.thumbMediaId = thumbMediaId;
+        }
+    }
+
+    public String getPicUrl() {
+        return picUrl;
+    }
+
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
+    }
+
+    public Music getMusic() {
+        return music;
+    }
+
+    public void setMusic(Music music) {
+        this.music = music;
     }
 }

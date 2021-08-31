@@ -1,6 +1,7 @@
-package cn.crabapples.wechatmessage.messages.pull;
+package cn.crabapples.wechatmessage.messages;
 
-import cn.crabapples.wechatmessage.messages.Message;
+import cn.crabapples.wechatmessage.ApplicationException;
+import cn.crabapples.wechatmessage.messages.pull.*;
 
 public enum MessageTypes {
     TEXT("text", TextMessage.class),
@@ -26,9 +27,9 @@ public enum MessageTypes {
                     return messageTypes.instance.newInstance();
                 }
             } catch (Exception e) {
-                throw new RuntimeException("get instance fail");
+                throw new ApplicationException("get instance fail");
             }
         }
-        throw new RuntimeException("not found type:" + type);
+        throw new ApplicationException("not found type:" + type);
     }
 }

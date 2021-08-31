@@ -1,40 +1,43 @@
 package cn.crabapples.wechatmessage.messages;
 
-public class BaseMessage {
-    private String signature;
-    private String echostr;
-    private Long timestamp;
-    private String nonce;
 
-    public String getSignature() {
-        return signature;
+public abstract class BaseMessage extends Message {
+    private String toUserName;
+    private String fromUserName;
+    private String createTime;
+    private String msgType;
+
+    @Override
+    public String getToUserName() {
+        return toUserName;
     }
 
-    public void setSignature(String signature) {
-        this.signature = signature;
+    @Override
+    public void setToUserName(String toUserName) {
+        this.toUserName = toUserName;
     }
 
-    public String getEchostr() {
-        return echostr;
+    public String getFromUserName() {
+        return fromUserName;
     }
 
-    public void setEchostr(String echostr) {
-        this.echostr = echostr;
+    public void setFromUserName(String fromUserName) {
+        this.fromUserName = fromUserName;
     }
 
-    public Long getTimestamp() {
-        return timestamp;
+    public String getCreateTime() {
+        return createTime;
     }
 
-    public void setTimestamp(Long timestamp) {
-        this.timestamp = timestamp;
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 
-    public String getNonce() {
-        return nonce;
+    public String getMsgType() {
+        return msgType;
     }
 
-    public void setNonce(String nonce) {
-        this.nonce = nonce;
+    public void setMsgType(String msgType) {
+        this.msgType = msgType;
     }
 }

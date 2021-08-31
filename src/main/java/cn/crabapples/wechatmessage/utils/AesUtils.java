@@ -1,5 +1,6 @@
 package cn.crabapples.wechatmessage.utils;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,12 +14,13 @@ import java.nio.charset.StandardCharsets;
 import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 import java.util.Base64;
 
 /**
- * TODO AES加密字符串
+ * TODO AES工具类
  *
  * @author Mr.He
  * 2019/7/3 23:24
@@ -35,17 +37,18 @@ public class AesUtils {
         byte[] aesKey = Base64.getDecoder().decode(aesKeyString + "=");
         IvParameterSpec iv = new IvParameterSpec(Arrays.copyOfRange(aesKey, 0, 16));
         SecretKeySpec keySpec = new SecretKeySpec(aesKey, "AES");
+        Security.addProvider(new BouncyCastleProvider());
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
         if (type == Cipher.ENCRYPT_MODE) {
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
-            AlgorithmParameterSpec spec = new IvParameterSpec(new byte[16]);
-            cipher.init(Cipher.ENCRYPT_MODE, keySpec, spec);
+            Security.addProvider(new BouncyCastleProvider());
+            cipher.init(Cipher.ENCRYPT_MODE, keySpec, iv);
             byte[] dataByte = cipher.doFinal(source.getBytes());
             byte[] encodeByte = Base64.getEncoder().encode(dataByte);
-            String data = parseByte2HexStr(encodeByte);
+            new String(Base64.getEncoder().encode(encodeByte));
+            String data = new String(Base64.getEncoder().encode(encodeByte));
             logger.info("加密之后的数据:[{}]", data);
             return data;
         } else if (type == Cipher.DECRYPT_MODE) {
-            Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
             cipher.init(Cipher.DECRYPT_MODE, keySpec, iv);
             byte[] decodeByte = Base64.getDecoder().decode(source);
             byte[] dataByte = cipher.doFinal(decodeByte);

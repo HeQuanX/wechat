@@ -1,6 +1,6 @@
 package cn.crabapples.wechatmessage.messages;
 
-public class EncryptMessage {
+public class EncryptMessage extends Message{
     private String toUserName;
     private String encrypt;
 
