@@ -1,5 +1,7 @@
 package cn.crabapples.wechatmessage.messages;
 
+import com.alibaba.fastjson.JSONObject;
+
 public class SignMessage {
     private String signature;
     private String echostr;
@@ -36,5 +38,10 @@ public class SignMessage {
 
     public void setNonce(String nonce) {
         this.nonce = nonce;
+    }
+
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this);
     }
 }

@@ -26,4 +26,5 @@ public class SignUtils {
         }
         return text.toString();
     }
+
 }

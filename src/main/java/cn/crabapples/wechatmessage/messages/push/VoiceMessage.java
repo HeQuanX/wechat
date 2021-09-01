@@ -1,6 +1,7 @@
 package cn.crabapples.wechatmessage.messages.push;
 
 import cn.crabapples.wechatmessage.messages.BaseMessage;
+import com.alibaba.fastjson.JSONObject;
 
 public class VoiceMessage extends BaseMessage {
     private String picUrl;
@@ -15,6 +16,10 @@ public class VoiceMessage extends BaseMessage {
 
         public void setMediaId(String mediaId) {
             this.mediaId = mediaId;
+        }
+        @Override
+        public String toString() {
+            return JSONObject.toJSONString(this);
         }
     }
 
@@ -32,5 +37,9 @@ public class VoiceMessage extends BaseMessage {
 
     public void setVoice(Voice voice) {
         this.voice = voice;
+    }
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this);
     }
 }

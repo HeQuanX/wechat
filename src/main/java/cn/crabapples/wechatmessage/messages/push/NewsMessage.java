@@ -1,6 +1,7 @@
 package cn.crabapples.wechatmessage.messages.push;
 
 import cn.crabapples.wechatmessage.messages.BaseMessage;
+import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
 
@@ -46,6 +47,10 @@ public class NewsMessage extends BaseMessage {
         public void setUrl(String url) {
             this.url = url;
         }
+        @Override
+        public String toString() {
+            return JSONObject.toJSONString(this);
+        }
     }
 
     public String getPicUrl() {
@@ -70,5 +75,9 @@ public class NewsMessage extends BaseMessage {
 
     public void setArticles(List<Articles> articles) {
         this.articles = articles;
+    }
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this);
     }
 }

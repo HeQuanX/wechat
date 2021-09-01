@@ -1,16 +1,10 @@
 package cn.crabapples.wechatmessage.messages;
 
+import com.alibaba.fastjson.JSONObject;
+
 public class EncryptMessage extends Message{
-    private String toUserName;
     private String encrypt;
 
-    public String getToUserName() {
-        return toUserName;
-    }
-
-    public void setToUserName(String toUserName) {
-        this.toUserName = toUserName;
-    }
 
     public String getEncrypt() {
         return encrypt;
@@ -18,5 +12,9 @@ public class EncryptMessage extends Message{
 
     public void setEncrypt(String encrypt) {
         this.encrypt = encrypt;
+    }
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this);
     }
 }

@@ -1,5 +1,7 @@
 package cn.crabapples.wechatmessage.messages;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.io.Serializable;
 
 public abstract class Message implements Serializable {
@@ -13,5 +15,8 @@ public abstract class Message implements Serializable {
         this.toUserName = toUserName;
     }
 
-
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this);
+    }
 }

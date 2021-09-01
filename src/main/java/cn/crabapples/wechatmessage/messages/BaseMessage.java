@@ -1,21 +1,13 @@
 package cn.crabapples.wechatmessage.messages;
 
 
+import com.alibaba.fastjson.JSONObject;
+
 public abstract class BaseMessage extends Message {
-    private String toUserName;
     private String fromUserName;
     private String createTime;
     private String msgType;
 
-    @Override
-    public String getToUserName() {
-        return toUserName;
-    }
-
-    @Override
-    public void setToUserName(String toUserName) {
-        this.toUserName = toUserName;
-    }
 
     public String getFromUserName() {
         return fromUserName;
@@ -39,5 +31,10 @@ public abstract class BaseMessage extends Message {
 
     public void setMsgType(String msgType) {
         this.msgType = msgType;
+    }
+
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this);
     }
 }

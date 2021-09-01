@@ -1,6 +1,7 @@
 package cn.crabapples.wechatmessage.messages.push;
 
 import cn.crabapples.wechatmessage.messages.BaseMessage;
+import com.alibaba.fastjson.JSONObject;
 
 public class ImageMessage extends BaseMessage {
     private String picUrl;
@@ -15,6 +16,11 @@ public class ImageMessage extends BaseMessage {
 
         public void setMediaId(String mediaId) {
             this.mediaId = mediaId;
+        }
+
+        @Override
+        public String toString() {
+            return JSONObject.toJSONString(this);
         }
     }
 
@@ -32,5 +38,10 @@ public class ImageMessage extends BaseMessage {
 
     public void setImage(Image image) {
         this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this);
     }
 }

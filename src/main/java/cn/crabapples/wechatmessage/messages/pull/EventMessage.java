@@ -1,6 +1,7 @@
 package cn.crabapples.wechatmessage.messages.pull;
 
 import cn.crabapples.wechatmessage.messages.BaseMessage;
+import com.alibaba.fastjson.JSONObject;
 
 public class EventMessage extends BaseMessage {
     private String event;
@@ -20,5 +21,10 @@ public class EventMessage extends BaseMessage {
 
     public void setEventKey(String eventKey) {
         this.eventKey = eventKey;
+    }
+
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this);
     }
 }
