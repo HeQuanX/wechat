@@ -1,7 +1,6 @@
 package cn.crabapples.wechatmessage.service;
 
 import cn.crabapples.wechatmessage.messages.BaseMessage;
-import cn.crabapples.wechatmessage.messages.EncryptMessage;
 import cn.crabapples.wechatmessage.messages.SignMessage;
 import cn.crabapples.wechatmessage.messages.Message;
 import cn.crabapples.wechatmessage.messages.push.TextMessage;
@@ -12,17 +11,7 @@ public interface MessageService {
 
     boolean checkServer(SignMessage message);
 
-    EncryptMessage xml2EncBean(String xmlString);
-
-    String decodeXml(EncryptMessage message);
-
-    String encodeXml(String xmlString);
-
-    Message xml2Bean(String xmlString);
-
-    String bean2Xml(Message message);
-
-    static Message demo(BaseMessage source) {
+    default Message demo(BaseMessage source) {
         TextMessage target = new TextMessage();
         target.setFromUserName("gh_58a7a8173b10");
 //        target.setToUserName(source.getFromUserName());
@@ -33,5 +22,5 @@ public interface MessageService {
         return target;
     }
 
-    EncryptMessage string2ResultEncBean(BaseMessage source, String encryptXml);
+    String getResultMessage(String xmlData);
 }

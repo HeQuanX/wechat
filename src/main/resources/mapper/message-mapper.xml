@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.crabapples.wechatmessage.mapper.MessageMapper">
+    <select id="getAll" resultType="cn.crabapples.wechatmessage.messages.Message">
+        select *
+        from message
+    </select>
+
+    <insert id="saveMessage" parameterType="cn.crabapples.wechatmessage.entity.Message" >
+        insert into message
+        values (#{toUserName}, #{fromUserName}, #{createTime}, #{msgType}, #{event}, #{eventKey}, #{picUrl},
+                #{mediaId}, #{msgId}, #{title}, #{description}, #{url}, #{location_X}, #{location_Y},
+                #{scale}, #{label}, #{format}, #{content}, #{thumbMediaId})
+    </insert>
+</mapper>
